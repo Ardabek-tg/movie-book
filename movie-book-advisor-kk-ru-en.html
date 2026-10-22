@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="kk" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="docTitle">Фильм және кітап кеңесшісі — Movie &amp; Book Advisor</title>
+
+<!-- Google Fonts: Fraunces, Inter, JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+/* =========================================================================
+   MOVIE & BOOK ADVISOR — СТИЛИ (барлығы осы файлдың ішінде, сыртқы CSS жоқ)
+   ========================================================================= */
+:root{
+  --bg: #FAF6EF; --bg-alt: #F1E8D8; --surface: #FFFFFF; --surface-2: #FFFDF9;
+  --ink: #1B1B3A; --ink-soft: #55536E; --border: rgba(27,27,58,0.12);
+  --amber: #F2A65A; --teal: #2EC4B6; --coral: #EF5B5B; --indigo: #4B4A9C;
+  --shadow: 0 10px 30px -12px rgba(27,27,58,0.25);
+  --shadow-sm: 0 4px 14px -6px rgba(27,27,58,0.18);
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --radius-lg: 22px; --radius-md: 14px; --radius-sm: 8px;
+  color-scheme: light;
+}
+body.dark{
+  --bg: #14141F; --bg-alt: #1B1B2C; --surface: #20202F; --surface-2: #262638;
+  --ink: #F5F1E8; --ink-soft: #B9B6CC; --border: rgba(245,241,232,0.12);
+  --amber: #F5B978; --teal: #4BDBCB; --coral: #FF7A7A; --indigo: #8B89DE;
+  --shadow: 0 14px 34px -12px rgba(0,0,0,0.55);
+  --shadow-sm: 0 6px 16px -6px rgba(0,0,0,0.45);
+  color-scheme: dark;
+}
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; scroll-padding-top: 90px; }
+body{
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased; transition: background-color .35s ease, color .35s ease;
+  overflow-x: hidden;
+}
+img{ max-width: 100%; display: block; }
+button{ font-family: inherit; cursor: pointer; }
+a{ color: inherit; text-decoration: none; }
+select, input{ font-family: inherit; }
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+::selection{ background: var(--amber); color: #1B1B3A; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+  outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 6px;
+}
+
+/* ------------------------------ Navbar ----------------------------------- */
+.navbar{
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+.navbar__inner{
+  max-width: 1280px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.brand{ display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; white-space: nowrap; }
+.brand__ticket{
+  position: relative; display: inline-flex; width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--amber), var(--coral)); color: #1B1B3A;
+  align-items: center; justify-content: center; font-size: .78rem; gap: 2px;
+  box-shadow: var(--shadow-sm); flex-shrink: 0;
+}
+.brand__ticket i:last-child{ font-size: .68rem; opacity: .9; }
+
+.navlinks{ display: flex; gap: 24px; align-items: center; }
+.navlinks__link{ font-size: .9rem; font-weight: 600; color: var(--ink-soft); position: relative; padding: 6px 0; transition: color .2s ease; }
+.navlinks__link:hover{ color: var(--ink); }
+.navlinks__link::after{ content: ""; position: absolute; left: 0; bottom: 0; width: 0%; height: 2px; background: var(--coral); transition: width .25s ease; }
+.navlinks__link:hover::after{ width: 100%; }
+.favcount{
+  display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
+  padding: 0 5px; border-radius: 999px; background: var(--coral); color: #fff; font-size: .68rem;
+  font-family: var(--font-mono); margin-left: 2px; transform: translateY(-1px);
+}
+
+.navbar__actions{ display: flex; align-items: center; gap: 10px; }
+
+/* Language switcher */
+.lang-switcher{
+  display: flex; align-items: center; gap: 2px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 3px;
+}
+.lang-btn{
+  border: none; background: transparent; color: var(--ink-soft);
+  font-family: var(--font-mono); font-size: .7rem; font-weight: 700; letter-spacing: .03em;
+  padding: 6px 11px; border-radius: 999px; transition: all .2s ease;
+}
+.lang-btn:hover{ color: var(--ink); }
+.lang-btn.is-active{ background: var(--ink); color: var(--bg); }
+body.dark .lang-btn.is-active{ background: var(--teal); color: #0d0d16; }
+
+.theme-toggle{
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; position: relative;
+  transition: transform .3s ease, background .3s ease;
+}
+.theme-toggle:hover{ transform: rotate(-12deg) scale(1.06); }
+.theme-toggle i{ position: absolute; transition: opacity .25s ease, transform .35s ease; font-size: .95rem; }
+#themeIconSun{ opacity: 0; transform: scale(.5) rotate(90deg); color: var(--amber); }
+#themeIconMoon{ opacity: 1; transform: scale(1) rotate(0deg); color: var(--indigo); }
+body.dark #themeIconSun{ opacity: 1; transform: scale(1) rotate(0deg); }
+body.dark #themeIconMoon{ opacity: 0; transform: scale(.5) rotate(-90deg); }
+
+.hamburger{ display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); align-items: center; justify-content: center; }
+
+/* ------------------------------ Hero ------------------------------------ */
+.hero{ position: relative; padding: 72px 24px 52px; overflow: hidden;
+  background: radial-gradient(ellipse 120% 90% at 50% -10%, color-mix(in srgb, var(--amber) 18%, transparent), transparent 60%), var(--bg); }
+.hero__backdrop{ position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.hero__stub{ position: absolute; font-size: 2.4rem; color: var(--ink); opacity: .07; animation: floaty 9s ease-in-out infinite; }
+.hero__stub--1{ top: 12%; left: 8%; } .hero__stub--2{ top: 65%; left: 5%; font-size: 3rem; animation-delay: 1.2s; }
+.hero__stub--3{ top: 20%; right: 10%; animation-delay: .6s; } .hero__stub--4{ top: 70%; right: 8%; font-size: 3.2rem; animation-delay: 1.8s; }
+.hero__stub--5{ top: 42%; right: 25%; font-size: 1.8rem; animation-delay: 2.4s; }
+@keyframes floaty{ 0%, 100%{ transform: translateY(0) rotate(0deg); } 50%{ transform: translateY(-18px) rotate(6deg); } }
+.hero__content{ position: relative; z-index: 1; max-width: 760px; margin: 0 auto; text-align: center; }
+.hero__eyebrow{ font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .1em; font-size: .7rem; color: var(--indigo); font-weight: 700; margin: 0 0 18px; animation: fadeUp .6s ease both; }
+.hero__title{ font-family: var(--font-display); font-weight: 700; font-size: clamp(1.9rem, 4.8vw, 3.3rem); line-height: 1.14; margin: 0 0 20px; letter-spacing: -0.01em; animation: fadeUp .7s ease .05s both; }
+.hero__subtitle{ font-size: 1.01rem; line-height: 1.65; color: var(--ink-soft); margin: 0 auto 34px; max-width: 610px; animation: fadeUp .7s ease .1s both; }
+@keyframes fadeUp{ from{ opacity: 0; transform: translateY(16px); } to{ opacity: 1; transform: translateY(0); } }
+
+.searchbar{
+  position: relative; max-width: 520px; margin: 0 auto 34px; display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 8px 6px 20px;
+  box-shadow: var(--shadow-sm); animation: fadeUp .7s ease .15s both; transition: box-shadow .25s ease, border-color .25s ease;
+}
+.searchbar:focus-within{ border-color: var(--teal); box-shadow: 0 0 0 4px color-mix(in srgb, var(--teal) 22%, transparent); }
+.searchbar__icon{ color: var(--ink-soft); font-size: .9rem; margin-right: 10px; }
+.searchbar__input{ flex: 1; border: none; outline: none; background: transparent; color: var(--ink); font-size: .95rem; padding: 10px 0; }
+.searchbar__input::placeholder{ color: var(--ink-soft); opacity: .7; }
+.searchbar__clear{
+  width: 32px; height: 32px; border: none; border-radius: 50%; background: var(--bg-alt); color: var(--ink-soft);
+  display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none;
+  transition: opacity .2s ease, background .2s ease; flex-shrink: 0;
+}
+.searchbar__clear.is-visible{ opacity: 1; pointer-events: auto; }
+.searchbar__clear:hover{ background: var(--coral); color: #fff; }
+
+.hero__stats{ display: flex; gap: 34px; justify-content: center; animation: fadeUp .7s ease .2s both; }
+.stat{ display: flex; flex-direction: column; align-items: center; }
+.stat strong{ font-family: var(--font-display); font-size: 1.65rem; color: var(--coral); }
+.stat span{ font-size: .74rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .05em; }
+
+/* --------------------------- Controls ----------------------------- */
+.controls{ position: sticky; top: 66px; z-index: 40; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 16px 24px; }
+.controls__inner{ max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+.control-group{ display: flex; flex-direction: column; gap: 8px; }
+.control-group__label{ font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+.chip-row{ display: flex; flex-wrap: wrap; gap: 8px; }
+.chip{ border: 1px solid var(--border); background: var(--surface); color: var(--ink-soft); padding: 8px 15px; border-radius: 999px; font-size: .83rem; font-weight: 600; transition: all .2s ease; white-space: nowrap; }
+.chip:hover{ border-color: var(--teal); color: var(--ink); transform: translateY(-1px); }
+.chip.is-active{ background: var(--ink); color: var(--bg); border-color: var(--ink); box-shadow: var(--shadow-sm); }
+body.dark .chip.is-active{ background: var(--teal); color: #0d0d16; border-color: var(--teal); }
+
+.select{
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink); padding: 9px 34px 9px 14px;
+  border-radius: 999px; font-size: .83rem; font-weight: 600; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2355536E'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; cursor: pointer; transition: border-color .2s ease;
+}
+.select:hover{ border-color: var(--teal); }
+
+.reset-btn{ margin-left: auto; display: flex; align-items: center; gap: 8px; border: 1px dashed var(--border); background: transparent; color: var(--ink-soft); padding: 9px 16px; border-radius: 999px; font-size: .8rem; font-weight: 600; transition: all .2s ease; }
+.reset-btn:hover{ border-color: var(--coral); color: var(--coral); }
+
+/* ------------------------------ Sections --------------------------------- */
+.section{ max-width: 1280px; margin: 0 auto; padding: 60px 24px 20px; }
+.section--alt{ background: var(--bg-alt); max-width: none; padding: 60px 0 20px; }
+.section--alt > *{ max-width: 1280px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+.section__head{ display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 26px; }
+.section__eyebrow{ font-family: var(--font-mono); text-transform: uppercase; font-size: .68rem; letter-spacing: .08em; color: var(--teal); font-weight: 700; margin: 0 0 6px; }
+.section__title{ font-family: var(--font-display); font-size: clamp(1.45rem, 2.8vw, 2.1rem); margin: 0; }
+.section__title span{ color: var(--coral); }
+.section__note{ font-size: .86rem; color: var(--ink-soft); max-width: 340px; text-align: right; margin: 0; }
+
+/* ------------------------------- Cards ----------------------------------- */
+.card-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(238px, 1fr)); gap: 22px; }
+.card{
+  position: relative; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(14px); animation: cardIn .5s ease forwards;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+.card:hover{ transform: translateY(-6px); box-shadow: var(--shadow); }
+@keyframes cardIn{ to{ opacity: 1; transform: translateY(0); } }
+.card::before{ content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--genre-color, var(--coral)); z-index: 2; }
+
+.card__poster{
+  position: relative; height: 146px; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 25% 20%, rgba(255,255,255,.35), transparent 55%),
+    linear-gradient(135deg, var(--genre-color, var(--coral)), color-mix(in srgb, var(--genre-color, var(--coral)) 60%, #1B1B3A));
+  overflow: hidden;
+}
+.card__poster::after{
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 14px;
+  background-image: radial-gradient(circle 7px at 12px 0, transparent 7px, var(--surface) 7.5px);
+  background-size: 24px 14px; background-repeat: repeat-x;
+}
+.card__icon{ font-size: 2.55rem; color: rgba(255,255,255,.92); filter: drop-shadow(0 4px 10px rgba(0,0,0,.25)); transition: transform .35s ease; }
+.card:hover .card__icon{ transform: scale(1.12) rotate(-4deg); }
+
+.card__type-badge{
+  position: absolute; top: 10px; left: 12px; font-family: var(--font-mono); font-size: .62rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em; background: rgba(0,0,0,.32); color: #fff; padding: 4px 9px;
+  border-radius: 999px; backdrop-filter: blur(3px); display: flex; align-items: center; gap: 5px;
+}
+.card__ribbon{
+  position: absolute; top: 10px; right: 10px; font-family: var(--font-mono); font-size: .56rem; font-weight: 700;
+  text-transform: uppercase; background: #fff; color: var(--ink); padding: 4px 8px; border-radius: 999px; z-index: 2;
+}
+.card__fav{
+  position: absolute; top: 8px; right: 10px; width: 34px; height: 34px; border: none; border-radius: 50%;
+  background: rgba(255,255,255,.85); color: var(--coral); display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: transform .2s ease, background .2s ease; z-index: 3;
+}
+.card__fav:hover{ transform: scale(1.14); }
+.card__fav.is-active{ background: var(--coral); color: #fff; }
+.card__fav.is-active i{ animation: pop .35s ease; }
+@keyframes pop{ 0%{ transform: scale(.6); } 60%{ transform: scale(1.25); } 100%{ transform: scale(1); } }
+.card--rec .card__fav{ top: 38px; }
+
+.card__body{ padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.card__title{ font-family: var(--font-display); font-size: 1.04rem; font-weight: 600; line-height: 1.28; margin: 0; }
+.card__meta{ display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag{ font-family: var(--font-mono); font-size: .65rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; background: var(--bg-alt); color: var(--ink-soft); border: 1px solid var(--border); }
+.tag--age{ background: color-mix(in srgb, var(--genre-color, var(--coral)) 16%, transparent); color: var(--ink); border-color: color-mix(in srgb, var(--genre-color, var(--coral)) 45%, transparent); font-weight: 700; }
+.card__desc{ font-size: .84rem; line-height: 1.55; color: var(--ink-soft); margin: 2px 0 0; flex: 1; }
+.card__id{ font-family: var(--font-mono); font-size: .64rem; color: var(--ink-soft); opacity: .55; margin-top: 8px; letter-spacing: .03em; }
+
+.empty-state{ text-align: center; padding: 50px 20px; color: var(--ink-soft); font-size: .94rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.empty-state i{ font-size: 1.8rem; opacity: .5; }
+
+/* -------------------------------- Footer --------------------------------- */
+.footer{ margin-top: 56px; padding: 40px 24px 30px; border-top: 1px solid var(--border); background: var(--bg-alt); text-align: center; }
+.footer__brand{ display: flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; }
+.footer__tagline{ color: var(--ink-soft); font-size: .88rem; margin: 0 0 4px; }
+.footer__meta{ color: var(--ink-soft); font-size: .74rem; opacity: .7; margin: 0; }
+
+/* -------------------------------- Toast ----------------------------------- */
+.toast{
+  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg);
+  padding: 12px 22px; border-radius: 999px; font-size: .83rem; font-weight: 600; box-shadow: var(--shadow);
+  opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; z-index: 200;
+  display: flex; align-items: center; gap: 8px; max-width: 90vw; text-align: left;
+}
+.toast.is-visible{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* -------------------------------- Responsive ------------------------------ */
+@media (max-width: 860px){
+  .navlinks{
+    position: fixed; top: 64px; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 4px;
+    background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 24px 18px;
+    transform: translateY(-130%); opacity: 0; transition: transform .3s ease, opacity .3s ease; box-shadow: var(--shadow-sm);
+  }
+  .navlinks.is-open{ transform: translateY(0); opacity: 1; }
+  .navlinks__link{ width: 100%; padding: 10px 0; }
+  .hamburger{ display: flex; }
+  .controls{ top: 60px; }
+  .section__note{ text-align: left; }
+}
+@media (max-width: 560px){
+  .hero{ padding: 52px 18px 38px; }
+  .hero__stats{ gap: 20px; }
+  .card-grid{ grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 14px; }
+  .card__poster{ height: 118px; }
+  .card__icon{ font-size: 2.05rem; }
+  .section{ padding: 44px 18px 10px; }
+  .section--alt > *{ padding-left: 18px; padding-right: 18px; }
+  .reset-btn{ margin-left: 0; }
+  .lang-btn{ padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<header class="navbar" id="navbar">
+  <div class="navbar__inner">
+    <a href="#top" class="brand">
+      <span class="brand__ticket" aria-hidden="true"><i class="fa-solid fa-ticket"></i><i class="fa-solid fa-book-open"></i></span>
+      <span class="brand__text" id="brandText">Movie &amp; Book Advisor</span>
+    </a>
+
+    <nav class="navlinks" id="navlinks">
+      <a href="#recommend" class="navlinks__link" id="navRecommendLink">Recommended</a>
+      <a href="#browse" class="navlinks__link" id="navBrowseLink">Browse</a>
+      <a href="#favorites" class="navlinks__link">
+        <i class="fa-solid fa-heart"></i> <span id="navFavLabel">Favorites</span> <span class="favcount" id="navFavCount">0</span>
+      </a>
+    </nav>
+
+    <div class="navbar__actions">
+      <div class="lang-switcher" id="langSwitcher" role="group" aria-label="Language / Тіл / Язык">
+        <button class="lang-btn" data-lang="kk" type="button">ҚАЗ</button>
+        <button class="lang-btn" data-lang="ru" type="button">РУС</button>
+        <button class="lang-btn" data-lang="en" type="button">ENG</button>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button">
+        <i class="fa-solid fa-moon" id="themeIconMoon"></i>
+        <i class="fa-solid fa-sun" id="themeIconSun"></i>
+      </button>
+      <button class="hamburger" id="hamburger" type="button">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero__backdrop" aria-hidden="true">
+      <span class="hero__stub hero__stub--1"><i class="fa-solid fa-film"></i></span>
+      <span class="hero__stub hero__stub--2"><i class="fa-solid fa-book"></i></span>
+      <span class="hero__stub hero__stub--3"><i class="fa-solid fa-star"></i></span>
+      <span class="hero__stub hero__stub--4"><i class="fa-solid fa-clapperboard"></i></span>
+      <span class="hero__stub hero__stub--5"><i class="fa-solid fa-bookmark"></i></span>
+    </div>
+
+    <div class="hero__content">
+      <p class="hero__eyebrow" id="heroEyebrow"></p>
+      <h1 class="hero__title" id="heroTitle"></h1>
+      <p class="hero__subtitle" id="heroSubtitle"></p>
+
+      <form class="searchbar" id="searchForm" role="search">
+        <i class="fa-solid fa-magnifying-glass searchbar__icon"></i>
+        <input type="search" id="searchInput" class="searchbar__input" autocomplete="off">
+        <button type="button" class="searchbar__clear" id="searchClear"><i class="fa-solid fa-xmark"></i></button>
+      </form>
+
+      <div class="hero__stats">
+        <div class="stat"><strong id="statMovies">30</strong><span id="statMoviesLabel">Movies</span></div>
+        <div class="stat"><strong id="statBooks">30</strong><span id="statBooksLabel">Books</span></div>
+        <div class="stat"><strong>4</strong><span id="statAgesLabel">Age groups</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTROLS ============ -->
+  <section class="controls" id="controls">
+    <div class="controls__inner">
+      <div class="control-group">
+        <span class="control-group__label"><i class="fa-solid fa-child-reaching"></i> <span id="ageGroupLabel">Age</span></span>
+        <div class="chip-row" id="ageChips">
+          <button class="chip chip--age is-active" data-age="all" type="button" id="ageAllChip">All ages</button>
+          <button class="chip chip--age" data-age="6-8" type="button">6&ndash;8</button>
+          <button class="chip chip--age" data-age="9-11" type="button">9&ndash;11</button>
+          <button class="chip chip--age" data-age="12-14" type="button">12&ndash;14</button>
+          <button class="chip chip--age" data-age="15-17" type="button">15&ndash;17</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-group__label" for="genreSelect"><i class="fa-solid fa-tags"></i> <span id="genreLabel">Genre</span></label>
+        <select id="genreSelect" class="select"></select>
+      </div>
+
+      <div class="control-group">
+        <span class="control-group__label"><i class="fa-solid fa-layer-group"></i> <span id="typeGroupLabel">Type</span></span>
+        <div class="chip-row" id="typeChips">
+          <button class="chip chip--type is-active" data-type="all" type="button" id="typeAllChip">All</button>
+          <button class="chip chip--type" data-type="movie" type="button"><i class="fa-solid fa-film"></i> <span id="typeMoviesChipLabel">Movies</span></button>
+          <button class="chip chip--type" data-type="book" type="button"><i class="fa-solid fa-book"></i> <span id="typeBooksChipLabel">Books</span></button>
+        </div>
+      </div>
+
+      <button class="reset-btn" id="resetFilters" type="button">
+        <i class="fa-solid fa-rotate-left"></i> <span id="resetBtnLabel">Reset</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ RECOMMENDED ============ -->
+  <section class="section" id="recommend">
+    <div class="section__head">
+      <div>
+        <p class="section__eyebrow" id="recommendEyebrow"></p>
+        <h2 class="section__title"><span id="recommendTitlePrefix"></span> <span id="recommendAgeLabel"></span></h2>
+      </div>
+      <p class="section__note" id="recommendNote"></p>
+    </div>
+    <div class="card-grid" id="recommendGrid"></div>
+  </section>
+
+  <!-- ============ BROWSE ============ -->
+  <section class="section section--alt" id="browse">
+    <div class="section__head">
+      <div>
+        <p class="section__eyebrow" id="browseEyebrow"></p>
+        <h2 class="section__title" id="browseTitle"></h2>
+      </div>
+      <p class="section__note" id="resultsCount"></p>
+    </div>
+    <div class="card-grid" id="browseGrid"></div>
+    <p class="empty-state" id="emptyState" hidden><i class="fa-solid fa-book-skull"></i><span id="emptyStateText"></span></p>
+  </section>
+
+  <!-- ============ FAVORITES ============ -->
+  <section class="section" id="favorites">
+    <div class="section__head">
+      <div>
+        <p class="section__eyebrow" id="favEyebrow"></p>
+        <h2 class="section__title" id="favTitle"></h2>
+      </div>
+      <p class="section__note" id="favNote"></p>
+    </div>
+    <div class="card-grid" id="favoritesGrid"></div>
+    <p class="empty-state" id="favEmptyState" hidden><i class="fa-regular fa-heart"></i><span id="favEmptyStateText"></span></p>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <span class="brand__ticket" aria-hidden="true"><i class="fa-solid fa-ticket"></i><i class="fa-solid fa-book-open"></i></span>
+      <span id="footerBrandText">Movie &amp; Book Advisor</span>
+    </div>
+    <p class="footer__tagline" id="footerTagline"></p>
+    <p class="footer__meta" id="footerMeta"></p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   MOVIE & BOOK ADVISOR — TRILINGUAL APP LOGIC (KK / RU / EN)
+   1. Raw data: id, type, age, genreKey + title/description in 3 languages
+   2. Genre names & styling per language
+   3. UI strings dictionary (kk/ru/en)
+   4. State
+   5. Utilities (storage, toast, theme, language)
+   6. Rendering
+   7. Recommendation algorithm
+   8. Filtering / search
+   9. Event wiring
+   10. Init
+   ========================================================================= */
+
+/* ------------------------------------------------------------------------
+   1. DATA
+   ------------------------------------------------------------------------ */
+const RAW_ITEMS = [
+/* ---------- MOVIES ---------- */
+{ id:"m01", type:"movie", age:"6-8", genreKey:"animation",
+  en:{title:"Toy Story", desc:"A cowboy doll's world is turned upside down when a flashy spaceman toy steals his spot as favorite."},
+  ru:{title:"История игрушек", desc:"Мир игрушечного ковбоя переворачивается, когда новая игрушка-космонавт занимает его место любимца."},
+  kk:{title:"Ойыншықтар хикаясы", desc:"Асаубасшы қуыршақтың тыныш өмірі ғарышкер ойыншық оның сүйікті орнын иемденгенде астан-кестен болады."} },
+{ id:"m02", type:"movie", age:"6-8", genreKey:"animation",
+  en:{title:"Finding Nemo", desc:"An anxious clownfish crosses the ocean to rescue his son, learning to let go along the way."},
+  ru:{title:"В поисках Немо", desc:"Тревожный клоун-рыба пересекает океан, чтобы спасти сына, и по пути учится его отпускать."},
+  kk:{title:"Немоны іздеу", desc:"Уайымшыл маскарад балығы ұлын құтқару үшін мұхитты кесіп өтеді, жол бойы оны жіберуді үйренеді."} },
+{ id:"m03", type:"movie", age:"6-8", genreKey:"animation",
+  en:{title:"Frozen", desc:"A princess sets out to bring back summer after her sister's icy powers freeze their kingdom."},
+  ru:{title:"Холодное сердце", desc:"Принцесса отправляется в путь, чтобы вернуть лето после того, как ледяная сила сестры сковала королевство."},
+  kk:{title:"Мұзды жүрек", desc:"Ханшайым әпкесінің мұз күші патшалықты мұздатқаннан кейін жазды қайтару үшін жолға шығады."} },
+{ id:"m04", type:"movie", age:"6-8", genreKey:"adventure",
+  en:{title:"Moana", desc:"A chief's daughter sails beyond the reef to save her island and restore the heart of the sea."},
+  ru:{title:"Моана", desc:"Дочь вождя отправляется за пределы рифа, чтобы спасти свой остров и вернуть сердце океана."},
+  kk:{title:"Моана", desc:"Көсемнің қызы аралын құтқару және мұхит жүрегін қайтару үшін риф сыртына жүзіп шығады."} },
+{ id:"m05", type:"movie", age:"6-8", genreKey:"superhero",
+  en:{title:"The Incredibles", desc:"A family of retired superheroes is forced back into action to save the world and each other."},
+  ru:{title:"Суперсемейка", desc:"Семья бывших супергероев вынуждена вновь вступить в бой, чтобы спасти мир и друг друга."},
+  kk:{title:"Ғажайып отбасы", desc:"Зейнеткерлікке шыққан супер қаһармандар отбасысы әлемді және бір-бірін құтқару үшін қайта іске кірісуге мәжбүр болады."} },
+{ id:"m06", type:"movie", age:"6-8", genreKey:"family",
+  en:{title:"Paddington", desc:"A polite bear from Peru moves in with a London family and turns their world delightfully upside down."},
+  ru:{title:"Приключения Паддингтона", desc:"Вежливый медвежонок из Перу переезжает к лондонской семье и переворачивает их жизнь с ног на голову."},
+  kk:{title:"Паддингтон", desc:"Перудан келген сыпайы аю лондондық отбасына көшіп келіп, олардың өмірін төңкеріп жібереді."} },
+{ id:"m07", type:"movie", age:"6-8", genreKey:"mystery",
+  en:{title:"Zootopia", desc:"A rookie rabbit police officer teams up with a sly fox to crack a case that shakes their city."},
+  ru:{title:"Зверополис", desc:"Новичок-кролик из полиции объединяется с хитрым лисом, чтобы раскрыть дело, которое всколыхнуло весь город."},
+  kk:{title:"Зоотопия", desc:"Тәжірибесіз қоян-полицей айлакер түлкімен бірге қаланы дүр сілкіндірген істі ашады."} },
+{ id:"m08", type:"movie", age:"6-8", genreKey:"family",
+  en:{title:"Coco", desc:"A boy with big musical dreams journeys into the Land of the Dead to uncover his family's true story."},
+  ru:{title:"Тайна Коко", desc:"Мальчик с большой мечтой о музыке попадает в Страну мёртвых и узнаёт правду о своей семье."},
+  kk:{title:"Коконың құпиясы", desc:"Үлкен музыкалық арманы бар бала Өлілер әлеміне түсіп, отбасының шынайы тарихын біледі."} },
+{ id:"m09", type:"movie", age:"9-11", genreKey:"adventure",
+  en:{title:"How to Train Your Dragon", desc:"A young Viking befriends the dragon he was raised to fear, changing his village forever."},
+  ru:{title:"Как приручить дракона", desc:"Юный викинг подружился с драконом, которого его с детства учили бояться, и это меняет всю деревню."},
+  kk:{title:"Айдаһарды қалай баулуға болады", desc:"Жас викинг бала кезінен қорқуды үйренген айдаһармен дос болып, бүкіл ауылын өзгертеді."} },
+{ id:"m10", type:"movie", age:"9-11", genreKey:"fantasy",
+  en:{title:"Harry Potter and the Sorcerer's Stone", desc:"A boy discovers a hidden wizarding world and his own extraordinary destiny."},
+  ru:{title:"Гарри Поттер и философский камень", desc:"Мальчик узнаёт, что он волшебник, и открывает для себя скрытый мир и своё необычное предназначение."},
+  kk:{title:"Гарри Поттер және пәлсапа тасы", desc:"Бала сиқыршы екенін біліп, жасырын сиқыр әлемі мен өзінің ерекше тағдырын ашады."} },
+{ id:"m11", type:"movie", age:"9-11", genreKey:"drama",
+  en:{title:"The Lion King", desc:"A young lion prince flees his kingdom after tragedy, then returns to reclaim his rightful place."},
+  ru:{title:"Король Лев", desc:"Юный львёнок бежит из королевства после трагедии, а затем возвращается, чтобы занять законное место."},
+  kk:{title:"Арыстан патша", desc:"Жас арыстан ханзадасы қайғылы оқиғадан кейін патшалығынан қашады, кейін өз орнын қайтару үшін оралады."} },
+{ id:"m12", type:"movie", age:"9-11", genreKey:"comedy",
+  en:{title:"Ratatouille", desc:"A rat with a gift for cooking dreams of becoming a chef in the finest kitchen in Paris."},
+  ru:{title:"Рататуй", desc:"Крыса с талантом к готовке мечтает стать шеф-поваром в лучшей кухне Парижа."},
+  kk:{title:"Рататуй", desc:"Аспаздыққа талантты тышқан Париждегі ең жақсы асханада аспазшы болуды армандайды."} },
+{ id:"m13", type:"movie", age:"9-11", genreKey:"adventure",
+  en:{title:"Up", desc:"An elderly widower ties thousands of balloons to his house for one last grand adventure."},
+  ru:{title:"Вверх", desc:"Пожилой вдовец привязывает тысячи шаров к своему дому ради последнего большого приключения."},
+  kk:{title:"Жоғары", desc:"Қарт жесір соңғы үлкен саяхат үшін үйіне мыңдаған шар байлайды."} },
+{ id:"m14", type:"movie", age:"9-11", genreKey:"superhero",
+  en:{title:"Big Hero 6", desc:"A boy and his inflatable robot companion become unlikely heroes to protect their city."},
+  ru:{title:"Город героев", desc:"Мальчик и его надувной робот-компаньон становятся неожиданными героями, защищающими свой город."},
+  kk:{title:"Үлкен батырлар алтылығы", desc:"Бала мен оның үрлемелі робот-серігі қаласын қорғайтын күтпеген батырларға айналады."} },
+{ id:"m15", type:"movie", age:"9-11", genreKey:"family",
+  en:{title:"Inside Out", desc:"Inside a young girl's mind, her emotions work together to help her through a big move."},
+  ru:{title:"Головоломка", desc:"Внутри разума маленькой девочки её эмоции работают сообща, помогая ей пережить большой переезд."},
+  kk:{title:"Ойлар ойыны", desc:"Кіші қыздың санасында оның эмоциялары үлкен көшуге бірге көмектеседі."} },
+{ id:"m16", type:"movie", age:"9-11", genreKey:"superhero",
+  en:{title:"Spider-Man: Into the Spider-Verse", desc:"A teenager discovers he's one of many Spider-People from parallel worlds who must team up to save them all."},
+  ru:{title:"Человек-паук: Через вселенные", desc:"Подросток узнаёт, что он один из множества Людей-пауков из параллельных миров, которым нужно объединиться."},
+  kk:{title:"Өрмекші-адам: Өрмекші әлемдеріне саяхат", desc:"Жасөспірім өзінің параллель әлемдердегі көптеген Өрмекші-адамдардың бірі екенін біліп, бәрін құтқару үшін бірігеді."} },
+{ id:"m17", type:"movie", age:"12-14", genreKey:"fantasy",
+  en:{title:"Percy Jackson & the Olympians: The Lightning Thief", desc:"A modern-day teen learns he's a demigod and races to stop a war between the Greek gods."},
+  ru:{title:"Перси Джексон и похититель молний", desc:"Современный подросток узнаёт, что он полубог, и спешит предотвратить войну между богами."},
+  kk:{title:"Перси Джексон және найзағай ұры", desc:"Қазіргі заманғы жасөспірім жартылай құдай екенін біліп, құдайлар арасындағы соғысты тоқтатуға асығады."} },
+{ id:"m18", type:"movie", age:"12-14", genreKey:"drama",
+  en:{title:"Wonder", desc:"A boy with a facial difference starts school for the first time and wins over his classmates with his spirit."},
+  ru:{title:"Чудо", desc:"Мальчик с особенностями внешности впервые идёт в обычную школу и покоряет одноклассников силой духа."},
+  kk:{title:"Керемет", desc:"Бет-әлпеті ерекше бала алғаш рет әдеттегі мектепке барып, сыныптастарын өзінің рухымен баурап алады."} },
+{ id:"m19", type:"movie", age:"12-14", genreKey:"scifi",
+  en:{title:"E.T. the Extra-Terrestrial", desc:"A boy befriends a stranded alien and helps him find a way back home."},
+  ru:{title:"Инопланетянин", desc:"Мальчик подружился с застрявшим на Земле инопланетянином и помогает ему вернуться домой."},
+  kk:{title:"Планетааралық дос", desc:"Бала Жерде қалып қойған ғарыштықпен достасып, оған үйіне оралуға көмектеседі."} },
+{ id:"m20", type:"movie", age:"12-14", genreKey:"adventure",
+  en:{title:"Jumanji: Welcome to the Jungle", desc:"Four teens are pulled into a video game world where they must survive as the avatars they chose."},
+  ru:{title:"Джуманджи: Зов джунглей", desc:"Четверо подростков затягивает в мир видеоигры, где им приходится выживать в облике выбранных персонажей."},
+  kk:{title:"Джуманджи: Джунглиге қош келдіңіз", desc:"Төрт жасөспірім бейне ойын әлеміне тартылып, таңдаған кейіпкерлер ретінде аман қалуға тырысады."} },
+{ id:"m21", type:"movie", age:"12-14", genreKey:"scifi",
+  en:{title:"Back to the Future", desc:"A teenager accidentally travels back in time and must make sure his parents still fall in love."},
+  ru:{title:"Назад в будущее", desc:"Подросток случайно попадает в прошлое и должен проследить, чтобы его родители всё же влюбились друг в друга."},
+  kk:{title:"Болашаққа саяхат", desc:"Жасөспірім байқаусызда өткенге өтіп кетіп, ата-анасының бір-біріне ғашық болуын қамтамасыз етуі керек."} },
+{ id:"m22", type:"movie", age:"12-14", genreKey:"scifi",
+  en:{title:"Guardians of the Galaxy", desc:"A band of misfit space outlaws teams up to protect the galaxy from a powerful threat."},
+  ru:{title:"Стражи Галактики", desc:"Команда космических изгоев объединяется, чтобы защитить галактику от могущественной угрозы."},
+  kk:{title:"Галактика сақшылары", desc:"Ғарыш қарақшыларының тобы галактиканы қуатты қатерден қорғау үшін бірігеді."} },
+{ id:"m23", type:"movie", age:"12-14", genreKey:"sports",
+  en:{title:"The Karate Kid", desc:"A teenager learns discipline and confidence from a wise martial arts mentor."},
+  ru:{title:"Каратэ-пацан", desc:"Подросток учится дисциплине и уверенности в себе у мудрого наставника по боевым искусствам."},
+  kk:{title:"Каратэші бала", desc:"Жасөспірім дана жекпе-жек ұстазынан тәртіп пен өзіне деген сенімділікті үйренеді."} },
+{ id:"m24", type:"movie", age:"12-14", genreKey:"comedy",
+  en:{title:"Night at the Museum", desc:"A museum night guard discovers the exhibits come to life after dark."},
+  ru:{title:"Ночь в музее", desc:"Ночной охранник музея обнаруживает, что экспонаты оживают после закрытия."},
+  kk:{title:"Мұражайдағы түн", desc:"Мұражайдың түнгі күзетшісі жабылғаннан кейін экспонаттардың тіршілік ала бастайтынын біледі."} },
+{ id:"m25", type:"movie", age:"15-17", genreKey:"scifi",
+  en:{title:"The Martian", desc:"An astronaut stranded alone on Mars must use science and grit to survive until rescue."},
+  ru:{title:"Марсианин", desc:"Астронавт, оставшийся один на Марсе, использует науку и упорство, чтобы выжить до спасения."},
+  kk:{title:"Марстық", desc:"Марста жалғыз қалған ғарышкер құтқарылғанға дейін ғылым мен табандылық арқасында аман қалады."} },
+{ id:"m26", type:"movie", age:"15-17", genreKey:"historical",
+  en:{title:"Hidden Figures", desc:"Three brilliant mathematicians help NASA win the space race despite facing discrimination."},
+  ru:{title:"Скрытые фигуры", desc:"Три талантливые женщины-математики помогают НАСА выиграть космическую гонку, несмотря на дискриминацию."},
+  kk:{title:"Жасырын тұлғалар", desc:"Үш дарынды математик әйел кемсітушілікке қарамастан НАСА-ға ғарыш жарысын жеңуге көмектеседі."} },
+{ id:"m27", type:"movie", age:"15-17", genreKey:"scifi",
+  en:{title:"Ready Player One", desc:"A teenager competes in a virtual reality treasure hunt that could change the real world forever."},
+  ru:{title:"Первому игроку приготовиться", desc:"Подросток участвует в охоте за сокровищами в виртуальной реальности, способной изменить настоящий мир."},
+  kk:{title:"Бірінші ойыншы дайын", desc:"Жасөспірім нақты әлемді өзгерте алатын виртуалды шындықтағы қазына іздеуге қатысады."} },
+{ id:"m28", type:"movie", age:"15-17", genreKey:"superhero",
+  en:{title:"Spider-Man: Homecoming", desc:"A young Spider-Man balances high school life with proving himself as a hero."},
+  ru:{title:"Человек-паук: Возвращение домой", desc:"Юный Человек-паук совмещает школьную жизнь с попыткой доказать, что он настоящий герой."},
+  kk:{title:"Өрмекші-адам: Үйге оралу", desc:"Жас Өрмекші-адам мектеп өмірін қаһарман екенін дәлелдеумен ұштастырады."} },
+{ id:"m29", type:"movie", age:"15-17", genreKey:"superhero",
+  en:{title:"Wonder Woman", desc:"An Amazon princess leaves her island home to fight for peace in the outside world."},
+  ru:{title:"Чудо-женщина", desc:"Принцесса амазонок покидает родной остров, чтобы бороться за мир во внешнем мире."},
+  kk:{title:"Ғажайып әйел", desc:"Амазонка ханшайымы бейбітшілік үшін күресу мақсатымен туған аралынан кетеді."} },
+{ id:"m30", type:"movie", age:"15-17", genreKey:"drama",
+  en:{title:"La La Land", desc:"An aspiring actress and a jazz musician chase their dreams while falling in love in Los Angeles."},
+  ru:{title:"Ла-Ла Ленд", desc:"Начинающая актриса и джазовый музыкант идут к своим мечтам и влюбляются друг в друга в Лос-Анджелесе."},
+  kk:{title:"Ла-Ла Ленд", desc:"Болашағы зор актриса мен джаз музыканты Лос-Анджелесте бір-біріне ғашық бола жүріп, арманына қарай ұмтылады."} },
+
+/* ---------- BOOKS ---------- */
+{ id:"b01", type:"book", age:"6-8", genreKey:"friendship",
+  en:{title:"Charlotte's Web", desc:"A wise spider and a curious pig prove that small acts of kindness can be the greatest magic of all."},
+  ru:{title:"Паутина Шарлотты", desc:"Мудрый паук и любопытный поросёнок доказывают, что маленькие добрые поступки — это настоящее волшебство."},
+  kk:{title:"Шарлоттаның торы", desc:"Дана өрмекші мен қызығушыл торай кішкентай ізгі істердің ең үлкен сиқыр екенін дәлелдейді."} },
+{ id:"b02", type:"book", age:"6-8", genreKey:"comedy",
+  en:{title:"The Cat in the Hat", desc:"A mischievous cat turns a rainy afternoon into a wild game of tidy-up-before-mom-gets-home."},
+  ru:{title:"Кот в колпаке", desc:"Озорной кот превращает дождливый день в весёлую игру, пока мама не вернулась домой."},
+  kk:{title:"Қалпақты мысық", desc:"Ойнақы мысық жаңбырлы күнді анасы келгенше үйді ретке келтіру ойынына айналдырады."} },
+{ id:"b03", type:"book", age:"6-8", genreKey:"friendship",
+  en:{title:"Frog and Toad Are Friends", desc:"Two amphibian best friends learn that patience and loyalty make every season better together."},
+  ru:{title:"Квак и Жаб — друзья", desc:"Два земноводных лучших друга учатся терпению и верности в каждое время года."},
+  kk:{title:"Бақа мен құрбақа — достар", desc:"Екі жәндік дос әр мезгілде шыдамдылық пен адалдықтың маңызын үйренеді."} },
+{ id:"b04", type:"book", age:"6-8", genreKey:"adventure",
+  en:{title:"Magic Tree House: Dinosaurs Before Dark", desc:"A brother and sister discover a tree house that whisks them back to the age of dinosaurs."},
+  ru:{title:"Волшебный дом на дереве: Динозавры до заката", desc:"Брат и сестра находят домик на дереве, который переносит их во времена динозавров."},
+  kk:{title:"Сиқырлы ағаш үй: Динозаврлар дәуірі", desc:"Аға мен қарындас оларды динозаврлар дәуіріне апаратын ағаш үйді табады."} },
+{ id:"b05", type:"book", age:"6-8", genreKey:"comedy",
+  en:{title:"Junie B. Jones and the Stupid Smelly Bus", desc:"A spirited kindergartner tackles her very first, very nerve-wracking school bus ride."},
+  ru:{title:"Джуни Би Джонс и вонючий автобус", desc:"Бойкая первоклассница переживает свою первую, очень волнительную поездку на школьном автобусе."},
+  kk:{title:"Джуни Би Джонс және сасық автобус", desc:"Жігерлі бірінші сынып оқушысы мектеп автобусымен алғашқы, өте толқулы сапарын бастан кешіреді."} },
+{ id:"b06", type:"book", age:"6-8", genreKey:"educational",
+  en:{title:"The Very Hungry Caterpillar", desc:"A tiny caterpillar munches through the days of the week on its way to becoming something beautiful."},
+  ru:{title:"Очень голодная гусеница", desc:"Маленькая гусеница поедает всё на своём пути через дни недели, пока не превращается в нечто прекрасное."},
+  kk:{title:"Өте аш көбелек құрты", desc:"Кішкентай құрт апта күндерін кезек-кезек жеп, әдемі жәндікке айналады."} },
+{ id:"b07", type:"book", age:"6-8", genreKey:"friendship",
+  en:{title:"Ivy and Bean", desc:"Two girls who thought they'd never be friends discover that opposites make the best partners in mischief."},
+  ru:{title:"Айви и Бин", desc:"Две девочки, которые думали, что никогда не подружатся, узнают, что противоположности — лучшие партнёры в проказах."},
+  kk:{title:"Айви мен Бин", desc:"Ешқашан дос болмаймыз деп ойлаған екі қыз қарама-қарсы мінездердің тамаша серіктес болатынын біледі."} },
+{ id:"b08", type:"book", age:"6-8", genreKey:"comedy",
+  en:{title:"Amelia Bedelia", desc:"A literal-minded housekeeper turns every instruction into a hilarious misunderstanding."},
+  ru:{title:"Амелия Беделия", desc:"Домработница, понимающая всё буквально, превращает каждое поручение в смешное недоразумение."},
+  kk:{title:"Амелия Беделия", desc:"Әр нәрсені тура мағынасында түсінетін үй қызметшісі әрбір тапсырманы күлкілі түсінбестікке айналдырады."} },
+{ id:"b09", type:"book", age:"9-11", genreKey:"fantasy",
+  en:{title:"Harry Potter and the Sorcerer's Stone", desc:"An orphaned boy learns he's a wizard and begins his first year at a magical school full of secrets."},
+  ru:{title:"Гарри Поттер и философский камень", desc:"Мальчик-сирота узнаёт, что он волшебник, и начинает первый год в школе магии, полной тайн."},
+  kk:{title:"Гарри Поттер және пәлсапа тасы", desc:"Жетім бала сиқыршы екенін біліп, құпияға толы сиқыр мектебіндегі бірінші жылын бастайды."} },
+{ id:"b10", type:"book", age:"9-11", genreKey:"fantasy",
+  en:{title:"Charlie and the Chocolate Factory", desc:"A poor boy wins a golden ticket to tour the strangest, sweetest factory in the world."},
+  ru:{title:"Чарли и шоколадная фабрика", desc:"Бедный мальчик выигрывает золотой билет на экскурсию по самой странной и сладкой фабрике в мире."},
+  kk:{title:"Чарли мен шоколад фабрикасы", desc:"Кедей бала әлемдегі ең таңғажайып әрі тәтті фабриканы аралауға алтын билет ұтып алады."} },
+{ id:"b11", type:"book", age:"9-11", genreKey:"fantasy",
+  en:{title:"Matilda", desc:"A brilliant little girl with a knack for mischief uses her hidden gifts to outsmart the grown-ups around her."},
+  ru:{title:"Матильда", desc:"Умная девочка с тягой к проказам использует свои скрытые способности, чтобы перехитрить взрослых."},
+  kk:{title:"Матильда", desc:"Ақылды әрі қалжыңқой қыз үлкендерді айлакерлікпен адастыру үшін жасырын қабілетін қолданады."} },
+{ id:"b12", type:"book", age:"9-11", genreKey:"fantasy",
+  en:{title:"The BFG", desc:"A young girl befriends a gentle giant who catches dreams for a living."},
+  ru:{title:"Большой добрый великан", desc:"Маленькая девочка дружит с добрым великаном, который ловит сны и дарит их спящим детям."},
+  kk:{title:"Үлкен мейірімді алып", desc:"Жас қыз түс көруді ұстап жүретін мейірімді алыппен дос болады."} },
+{ id:"b13", type:"book", age:"9-11", genreKey:"comedy",
+  en:{title:"Diary of a Wimpy Kid", desc:"A middle schooler chronicles the awkward, funny ups and downs of growing up."},
+  ru:{title:"Дневник слабака", desc:"Школьник средних классов ведёт дневник о неловких и смешных буднях взросления."},
+  kk:{title:"Әлсіз баланың күнделігі", desc:"Орта мектеп оқушысы өсу жолындағы ыңғайсыз әрі күлкілі оқиғаларды күнделігіне жазады."} },
+{ id:"b14", type:"book", age:"9-11", genreKey:"adventure",
+  en:{title:"Percy Jackson: The Lightning Thief", desc:"A boy discovers he's the son of a Greek god and sets off on a quest to stop a war among the gods."},
+  ru:{title:"Перси Джексон и похититель молний", desc:"Мальчик узнаёт, что он сын греческого бога, и отправляется в поход, чтобы предотвратить войну богов."},
+  kk:{title:"Перси Джексон: Найзағай ұры", desc:"Бала грек құдайының ұлы екенін біліп, құдайлар арасындағы соғысты тоқтату сапарына шығады."} },
+{ id:"b15", type:"book", age:"9-11", genreKey:"fantasy",
+  en:{title:"The Lion, the Witch and the Wardrobe", desc:"Four siblings step through a wardrobe into a snowy kingdom that needs their help."},
+  ru:{title:"Лев, колдунья и платяной шкаф", desc:"Четверо детей проходят через платяной шкаф в снежное королевство, которому нужна их помощь."},
+  kk:{title:"Арыстан, сиқыршы және гардероб", desc:"Төрт бала гардероб арқылы көмегін қажет ететін қарлы патшалыққа өтеді."} },
+{ id:"b16", type:"book", age:"9-11", genreKey:"friendship",
+  en:{title:"Because of Winn-Dixie", desc:"A lonely girl and a scruffy stray dog help a small town discover the value of friendship."},
+  ru:{title:"Спасибо Уинн-Дикси", desc:"Одинокая девочка и лохматый бездомный пёс помогают маленькому городку заново открыть ценность дружбы."},
+  kk:{title:"Уинн-Диксидің арқасында", desc:"Жалғыз қыз бен түкті көшпелі ит кішкентай қалашыққа достықтың құндылығын қайта ашады."} },
+{ id:"b17", type:"book", age:"12-14", genreKey:"drama",
+  en:{title:"Wonder", desc:"A boy with facial differences starts mainstream school and teaches everyone around him about kindness."},
+  ru:{title:"Чудо", desc:"Мальчик с особенностями внешности начинает обычную школу и учит всех вокруг доброте."},
+  kk:{title:"Керемет", desc:"Бет-әлпеті ерекше бала әдеттегі мектепке барып, айналасындағыларға мейірімділіктен сабақ береді."} },
+{ id:"b18", type:"book", age:"12-14", genreKey:"adventure",
+  en:{title:"Holes", desc:"A boy sentenced to dig holes at a strange camp uncovers a century-old mystery."},
+  ru:{title:"Ямы", desc:"Мальчик, приговорённый копать ямы в странном лагере, раскрывает тайну столетней давности."},
+  kk:{title:"Шұңқырлар", desc:"Бейтаныс лагерьде шұңқыр қазуға үкім етілген бала ғасырлық құпияны ашады."} },
+{ id:"b19", type:"book", age:"12-14", genreKey:"scifi",
+  en:{title:"The Giver", desc:"In a world without pain or color, one boy is chosen to hold all of society's memories."},
+  ru:{title:"Дающий", desc:"В мире без боли и цвета одному мальчику доверяют хранить все воспоминания общества."},
+  kk:{title:"Беруші", desc:"Азап пен түссіз әлемде бір балаға қоғамның барлық естеліктерін сақтау тапсырылады."} },
+{ id:"b20", type:"book", age:"12-14", genreKey:"drama",
+  en:{title:"Bridge to Terabithia", desc:"Two friends build an imaginary kingdom in the woods that changes how they see the world."},
+  ru:{title:"Мост в Терабитию", desc:"Двое друзей строят воображаемое королевство в лесу, которое меняет их взгляд на мир."},
+  kk:{title:"Терабитияға апаратын көпір", desc:"Екі дос орманда қиял патшалығын құрып, әлемге көзқарасын өзгертеді."} },
+{ id:"b21", type:"book", age:"12-14", genreKey:"adventure",
+  en:{title:"Hatchet", desc:"A boy stranded in the wilderness after a plane crash must learn to survive with only a hatchet."},
+  ru:{title:"Хэтчет", desc:"Мальчик, оказавшийся один в дикой природе после крушения самолёта, учится выживать с одним топориком."},
+  kk:{title:"Балта", desc:"Ұшақ апатынан кейін жабайы табиғатта жалғыз қалған бала жалғыз балтамен аман қалуды үйренеді."} },
+{ id:"b22", type:"book", age:"12-14", genreKey:"scifi",
+  en:{title:"A Wrinkle in Time", desc:"A girl travels across the universe through folded space to rescue her missing father."},
+  ru:{title:"Излом времени", desc:"Девочка путешествует через свёрнутое пространство вселенной, чтобы спасти пропавшего отца."},
+  kk:{title:"Уақыт бүктемесі", desc:"Қыз жоғалған әкесін құтқару үшін бүктелген ғарыш кеңістігі арқылы саяхаттайды."} },
+{ id:"b23", type:"book", age:"12-14", genreKey:"drama",
+  en:{title:"The Outsiders", desc:"Two rival groups of teenagers navigate loyalty, class, and identity in a divided town."},
+  ru:{title:"Изгои", desc:"Два враждующих подростковых лагеря учатся верности, классовым различиям и собственной идентичности в разделённом городе."},
+  kk:{title:"Бөтендер", desc:"Екі қарсылас жасөспірімдер тобы бөлінген қалада адалдық, тап және өзіндік болмысты зерттейді."} },
+{ id:"b24", type:"book", age:"12-14", genreKey:"adventure",
+  en:{title:"Where the Red Fern Grows", desc:"A boy and his two loyal hunting dogs share an unforgettable bond in the Ozark hills."},
+  ru:{title:"Там, где цветёт красный папоротник", desc:"Мальчик и две его верные охотничьи собаки делят незабываемую дружбу среди холмов Озарка."},
+  kk:{title:"Қызыл папоротник өсетін жер", desc:"Бала мен оның екі адал аңшы иті Озарк төбелерінде ұмытылмас достық құрады."} },
+{ id:"b25", type:"book", age:"15-17", genreKey:"historical",
+  en:{title:"The Book Thief", desc:"A girl growing up in Nazi Germany finds comfort and rebellion in stealing books."},
+  ru:{title:"Книжный вор", desc:"Девочка, растущая в нацистской Германии, находит утешение и тихий бунт в краже книг."},
+  kk:{title:"Кітап ұры", desc:"Нацистік Германияда өсіп келе жатқан қыз кітап ұрлаудан жұбаныш пен тыныш қарсылық табады."} },
+{ id:"b26", type:"book", age:"15-17", genreKey:"classic",
+  en:{title:"To Kill a Mockingbird", desc:"A young girl in the American South watches her father defend justice in a deeply unjust trial."},
+  ru:{title:"Убить пересмешника", desc:"Девочка с американского Юга наблюдает, как её отец отстаивает справедливость в глубоко несправедливом суде."},
+  kk:{title:"Мазақшыны өлтіру", desc:"Америка Оңтүстігіндегі қыз әкесінің әділетсіз сотта әділдікті қорғауын көзімен көреді."} },
+{ id:"b27", type:"book", age:"15-17", genreKey:"fantasy",
+  en:{title:"The Hobbit", desc:"A homebody hobbit is swept into an epic quest to reclaim a mountain of treasure from a dragon."},
+  ru:{title:"Хоббит", desc:"Домоседа-хоббита втягивают в грандиозный поход за сокровищами, охраняемыми драконом."},
+  kk:{title:"Хоббит", desc:"Үйшіл хоббит айдаһар сақтайтын қазынаны қайтару үшін үлкен сапарға тартылады."} },
+{ id:"b28", type:"book", age:"15-17", genreKey:"drama",
+  en:{title:"The Fault in Our Stars", desc:"Two teens who meet in a cancer support group fall in love and face life's biggest questions together."},
+  ru:{title:"Виноваты звёзды", desc:"Два подростка, встретившиеся в группе поддержки для онкобольных, влюбляются и вместе ищут ответы на главные вопросы жизни."},
+  kk:{title:"Жұлдыздар кінәлі", desc:"Қатерлі ісікке қарсы топта танысқан екі жасөспірім ғашық болып, өмірдің үлкен сұрақтарына бірге жауап іздейді."} },
+{ id:"b29", type:"book", age:"15-17", genreKey:"scifi",
+  en:{title:"Ender's Game", desc:"A gifted child is trained at a battle school to lead humanity's defense against an alien threat."},
+  ru:{title:"Игра Эндера", desc:"Одарённого ребёнка обучают в боевой школе, чтобы возглавить оборону человечества от инопланетной угрозы."},
+  kk:{title:"Эндер ойыны", desc:"Дарынды баланы адамзатты бөтен әлемдік қатерден қорғауға басшылық ету үшін жауынгерлік мектепте дайындайды."} },
+{ id:"b30", type:"book", age:"15-17", genreKey:"adventure",
+  en:{title:"The Alchemist", desc:"A shepherd travels across the desert in search of treasure and discovers his own personal legend."},
+  ru:{title:"Алхимик", desc:"Пастух отправляется через пустыню на поиски сокровища и открывает собственную судьбу."},
+  kk:{title:"Алхимик", desc:"Қойшы қазына іздеп шөлді кесіп өтіп, өзінің жеке тағдырын ашады."} }
+];
+
+/* ------------------------------------------------------------------------
+   2. GENRE NAMES & STYLING
+   ------------------------------------------------------------------------ */
+const GENRE_STYLE = {
+  friendship:  { color:"#FF9F1C", icon:"fa-solid fa-people-arrows" },
+  comedy:      { color:"#E1B60A", icon:"fa-solid fa-face-laugh-beam" },
+  adventure:   { color:"#F2A65A", icon:"fa-solid fa-compass" },
+  educational: { color:"#06A77D", icon:"fa-solid fa-flask" },
+  fantasy:     { color:"#8E7CC3", icon:"fa-solid fa-hat-wizard" },
+  drama:       { color:"#E76F51", icon:"fa-solid fa-masks-theater" },
+  scifi:       { color:"#4CC9F0", icon:"fa-solid fa-rocket" },
+  historical:  { color:"#7B6D8D", icon:"fa-solid fa-landmark" },
+  classic:     { color:"#A9746E", icon:"fa-solid fa-scroll" },
+  animation:   { color:"#2EC4B6", icon:"fa-solid fa-palette" },
+  superhero:   { color:"#E63946", icon:"fa-solid fa-mask" },
+  family:      { color:"#EF5B5B", icon:"fa-solid fa-house-chimney" },
+  mystery:     { color:"#6C757D", icon:"fa-solid fa-magnifying-glass" },
+  sports:      { color:"#FB8500", icon:"fa-solid fa-futbol" }
+};
+
+const GENRE_NAMES = {
+  en: { friendship:"Friendship", comedy:"Comedy", adventure:"Adventure", educational:"Educational", fantasy:"Fantasy", drama:"Drama", scifi:"Sci-Fi", historical:"Historical", classic:"Classic", animation:"Animation", superhero:"Superhero", family:"Family", mystery:"Mystery", sports:"Sports" },
+  ru: { friendship:"Дружба", comedy:"Комедия", adventure:"Приключения", educational:"Обучающая", fantasy:"Фэнтези", drama:"Драма", scifi:"Фантастика", historical:"Историческое", classic:"Классика", animation:"Анимация", superhero:"Супергерои", family:"Семейное", mystery:"Детектив", sports:"Спорт" },
+  kk: { friendship:"Достық", comedy:"Комедия", adventure:"Шытырман оқиға", educational:"Танымдық", fantasy:"Фэнтези", drama:"Драма", scifi:"Фантастика", historical:"Тарихи", classic:"Классика", animation:"Анимация", superhero:"Супергерой", family:"Отбасылық", mystery:"Детектив", sports:"Спорт" }
+};
+
+/* ------------------------------------------------------------------------
+   3. UI STRINGS
+   ------------------------------------------------------------------------ */
+const UI = {
+  en: {
+    docTitle: "Movie & Book Advisor — find your next favorite story",
+    brand: "Movie & Book Advisor",
+    navRecommend: "Recommended", navBrowse: "Browse", navFav: "Favorites",
+    heroEyebrow: "A reading & movie-night companion for ages 6\u201317",
+    heroTitle: "Find the next story<br>your kid won't put down.",
+    heroSubtitle: "Every title below is picked for its age range and hand-tagged by genre — like a librarian and a movie usher working the same front desk. Search, filter, save favorites, and let the age-matched recommendations do the rest.",
+    searchPlaceholder: "Search titles, e.g. \u201cdragon\u201d, \u201cMatilda\u201d, \u201cspace\u201d\u2026",
+    searchAria: "Search titles", searchClearAria: "Clear search",
+    statMovies: "Movies", statBooks: "Books", statAges: "Age groups",
+    ageLabel: "Age", ageAll: "All ages",
+    genreLabel: "Genre", genreAll: "All genres",
+    typeLabel: "Type", typeAll: "All", typeMovies: "Movies", typeBooks: "Books",
+    resetBtn: "Reset",
+    recommendEyebrow: "Recommendation engine", recommendPrefix: "Picked for", recommendAgeAll: "every age",
+    recommendNoteDefault: "Choose an age chip above and this shelf reshuffles instantly.",
+    recommendNoteActive: (n, age, genre) => `Top ${n} matches for ages ${age}${genre ? " \u00b7 " + genre : ""}, ranked by our recommendation engine.`,
+    browseEyebrow: "Full catalog", browseTitle: "Browse everything",
+    resultsCount: (n) => `${n} title${n === 1 ? "" : "s"}`,
+    emptyBrowse: "Nothing matches those filters yet. Try widening your search.",
+    favEyebrow: "Saved by you", favTitle: "Your favorites",
+    favNote: "Stored locally in this browser \u2014 nothing leaves your device.",
+    emptyFav: "No favorites yet. Tap the heart on any card to pin it here.",
+    footerBrand: "Movie & Book Advisor",
+    footerTagline: "Family-friendly picks, matched by age, saved to your shelf.",
+    footerMeta: "Built with HTML, CSS & JavaScript \u00b7 All titles hand-curated for ages 6\u201317.",
+    typeMovieBadge: "Movie", typeBookBadge: "Book", topPick: "Top pick",
+    favAdd: "Add to favorites", favRemove: "Remove from favorites",
+    toastSaved: (t) => `Saved "${t}" to favorites`,
+    toastRemoved: (t) => `Removed "${t}" from favorites`,
+    toastReset: "Filters reset",
+    ageTag: (age) => `Ages ${age}`
+  },
+  ru: {
+    docTitle: "Гид по фильмам и книгам — найдите свою следующую любимую историю",
+    brand: "Гид по фильмам и книгам",
+    navRecommend: "Рекомендации", navBrowse: "Каталог", navFav: "Избранное",
+    heroEyebrow: "Помощник для чтения и киновечеров — детям от 6 до 17 лет",
+    heroTitle: "Найдите книгу или фильм,<br>от которых не оторвать ребёнка.",
+    heroSubtitle: "Каждое произведение подобрано по возрасту и жанру — как в библиотеке и кинотеатре одновременно. Ищите, фильтруйте, сохраняйте избранное — а рекомендательный алгоритм подскажет, с чего начать.",
+    searchPlaceholder: "Поиск по названию, например «дракон», «Матильда», «космос»\u2026",
+    searchAria: "Поиск по названию", searchClearAria: "Очистить поиск",
+    statMovies: "Фильмов", statBooks: "Книг", statAges: "Возрастных групп",
+    ageLabel: "Возраст", ageAll: "Все возрасты",
+    genreLabel: "Жанр", genreAll: "Все жанры",
+    typeLabel: "Тип", typeAll: "Всё", typeMovies: "Фильмы", typeBooks: "Книги",
+    resetBtn: "Сбросить",
+    recommendEyebrow: "Рекомендательный алгоритм", recommendPrefix: "Подобрано для", recommendAgeAll: "любого возраста",
+    recommendNoteDefault: "Выберите возраст выше — и подборка сразу обновится.",
+    recommendNoteActive: (n, age, genre) => `Топ ${n} вариантов для возраста ${age}${genre ? " \u00b7 " + genre : ""}, отсортировано алгоритмом рекомендаций.`,
+    browseEyebrow: "Полный каталог", browseTitle: "Смотреть всё",
+    resultsCount: (n) => {
+      const mod10 = n % 10, mod100 = n % 100;
+      let word = "произведений";
+      if (mod10 === 1 && mod100 !== 11) word = "произведение";
+      else if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) word = "произведения";
+      return `${n} ${word}`;
+    },
+    emptyBrowse: "По этим фильтрам ничего не найдено. Попробуйте изменить запрос.",
+    favEyebrow: "Сохранено вами", favTitle: "Ваше избранное",
+    favNote: "Хранится локально в этом браузере \u2014 данные никуда не передаются.",
+    emptyFav: "Пока пусто. Нажмите на сердечко на любой карточке, чтобы сохранить её здесь.",
+    footerBrand: "Гид по фильмам и книгам",
+    footerTagline: "Семейные произведения, подобранные по возрасту и сохранённые в вашей коллекции.",
+    footerMeta: "Сделано на HTML, CSS и JavaScript \u00b7 Все произведения подобраны вручную для детей 6\u201317 лет.",
+    typeMovieBadge: "Фильм", typeBookBadge: "Книга", topPick: "Топ выбор",
+    favAdd: "Добавить в избранное", favRemove: "Убрать из избранного",
+    toastSaved: (t) => `«${t}» сохранено в избранное`,
+    toastRemoved: (t) => `«${t}» удалено из избранного`,
+    toastReset: "Фильтры сброшены",
+    ageTag: (age) => `${age} лет`
+  },
+  kk: {
+    docTitle: "Фильм және кітап кеңесшісі — келесі сүйікті әңгіменізді табыңыз",
+    brand: "Фильм және кітап кеңесшісі",
+    navRecommend: "Ұсыныстар", navBrowse: "Каталог", navFav: "Таңдаулылар",
+    heroEyebrow: "6\u201317 жас аралығындағы балаларға арналған оқу және кино кеші көмекшісі",
+    heroTitle: "Балаңыз қолынан тастамайтын<br>келесі кітапты немесе фильмді табыңыз.",
+    heroSubtitle: "Әр туынды жасы мен жанры бойынша таңдалған — кітапхана мен кинотеатр бір мезетте жұмыс істегендей. Іздеңіз, сүзгілеңіз, таңдаулыларды сақтаңыз — ал ұсыныс алгоритмі қайдан бастау керегін көрсетеді.",
+    searchPlaceholder: "Атау бойынша іздеңіз, мысалы «айдаһар», «Матильда», «ғарыш»\u2026",
+    searchAria: "Атау бойынша іздеу", searchClearAria: "Іздеуді тазарту",
+    statMovies: "Фильм", statBooks: "Кітап", statAges: "Жас тобы",
+    ageLabel: "Жас", ageAll: "Барлық жас",
+    genreLabel: "Жанр", genreAll: "Барлық жанр",
+    typeLabel: "Түрі", typeAll: "Барлығы", typeMovies: "Фильмдер", typeBooks: "Кітаптар",
+    resetBtn: "Қалпына келтіру",
+    recommendEyebrow: "Ұсыныс алгоритмі", recommendPrefix: "Таңдалды:", recommendAgeAll: "барлық жасқа",
+    recommendNoteDefault: "Жоғарыдан жасты таңдаңыз — таңдау бірден жаңарады.",
+    recommendNoteActive: (n, age, genre) => `${age} жасқа арналған үздік ${n} сәйкестік${genre ? " \u00b7 " + genre : ""}, ұсыныс алгоритмі бойынша сұрыпталған.`,
+    browseEyebrow: "Толық каталог", browseTitle: "Барлығын қарау",
+    resultsCount: (n) => `${n} туынды`,
+    emptyBrowse: "Бұл сүзгілер бойынша ештеңе табылмады. Сұранысты кеңейтіп көріңіз.",
+    favEyebrow: "Сіз сақтаған", favTitle: "Таңдаулыларыңыз",
+    favNote: "Осы браузерде жергілікті сақталады \u2014 деректер еш жерге жіберілмейді.",
+    emptyFav: "Әзірше бос. Кез келген карточкадағы жүрекшені басып, осында сақтаңыз.",
+    footerBrand: "Фильм және кітап кеңесшісі",
+    footerTagline: "Жасына сай таңдалған, өз сөреңізге сақталған отбасылық туындылар.",
+    footerMeta: "HTML, CSS және JavaScript көмегімен жасалды \u00b7 Барлық туындылар 6\u201317 жас аралығына қолмен іріктелген.",
+    typeMovieBadge: "Фильм", typeBookBadge: "Кітап", topPick: "Үздік таңдау",
+    favAdd: "Таңдаулыға қосу", favRemove: "Таңдаулыдан алып тастау",
+    toastSaved: (t) => `«${t}» таңдаулыларға сақталды`,
+    toastRemoved: (t) => `«${t}» таңдаулылардан өшірілді`,
+    toastReset: "Сүзгілер қалпына келтірілді",
+    ageTag: (age) => `${age} жас`
+  }
+};
+
+/* ------------------------------------------------------------------------
+   4. STATE
+   ------------------------------------------------------------------------ */
+const state = {
+  lang: loadLang(),
+  search: "",
+  age: "all",
+  genre: "all",
+  type: "all",
+  favorites: loadFavorites()
+};
+
+const AGE_ORDER = ["6-8", "9-11", "12-14", "15-17"];
+
+/* ------------------------------------------------------------------------
+   5. UTILITIES
+   ------------------------------------------------------------------------ */
+function loadFavorites(){
+  try{ const raw = localStorage.getItem("mba_favorites"); return raw ? JSON.parse(raw) : []; }
+  catch(e){ console.warn("Favorites load failed", e); return []; }
+}
+function saveFavorites(){
+  try{ localStorage.setItem("mba_favorites", JSON.stringify(state.favorites)); }
+  catch(e){ console.warn("Favorites save failed", e); }
+}
+function isFavorite(id){ return state.favorites.includes(id); }
+function toggleFavorite(id){
+  if(isFavorite(id)) state.favorites = state.favorites.filter(f => f !== id);
+  else state.favorites.push(id);
+  saveFavorites();
+  updateFavCount();
+}
+
+function loadLang(){
+  const saved = localStorage.getItem("mba_lang");
+  return (saved === "ru" || saved === "en" || saved === "kk") ? saved : "kk";
+}
+function saveLang(lang){ localStorage.setItem("mba_lang", lang); }
+
+let toastTimer = null;
+function showToast(message, icon = "fa-solid fa-circle-check"){
+  const toast = document.getElementById("toast");
+  toast.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
+  toast.classList.add("is-visible");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 2200);
+}
+function updateFavCount(){ document.getElementById("navFavCount").textContent = state.favorites.length; }
+
+function initTheme(){
+  const saved = localStorage.getItem("mba_theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.body.classList.toggle("dark", saved ? saved === "dark" : prefersDark);
+}
+function toggleTheme(){
+  const isDark = document.body.classList.toggle("dark");
+  localStorage.setItem("mba_theme", isDark ? "dark" : "light");
+}
+
+/* ------------------------------------------------------------------------
+   6. RENDERING
+   ------------------------------------------------------------------------ */
+function t(){ return UI[state.lang]; }
+
+function cardTemplate(item, opts = {}){
+  const s = GENRE_STYLE[item.genreKey];
+  const genreName = GENRE_NAMES[state.lang][item.genreKey];
+  const text = item[state.lang];
+  const fav = isFavorite(item.id);
+  const typeIcon = item.type === "movie" ? "fa-solid fa-film" : "fa-solid fa-book";
+  const typeLabel = item.type === "movie" ? t().typeMovieBadge : t().typeBookBadge;
+  const recClass = opts.rec ? " card--rec" : "";
+  const ribbon = opts.rec ? `<span class="card__ribbon">${t().topPick}</span>` : "";
+
+  return `
+    <article class="card${recClass}" style="--genre-color:${s.color}" data-id="${item.id}">
+      <div class="card__poster">
+        <span class="card__type-badge"><i class="${typeIcon}"></i>${typeLabel}</span>
+        ${ribbon}
+        <button class="card__fav ${fav ? "is-active" : ""}" data-fav-id="${item.id}" aria-label="${fav ? t().favRemove : t().favAdd}" title="${fav ? t().favRemove : t().favAdd}">
+          <i class="${fav ? "fa-solid" : "fa-regular"} fa-heart"></i>
+        </button>
+        <i class="card__icon ${s.icon}"></i>
+      </div>
+      <div class="card__body">
+        <h3 class="card__title">${text.title}</h3>
+        <div class="card__meta">
+          <span class="tag tag--age">${t().ageTag(item.age)}</span>
+          <span class="tag">${genreName}</span>
+        </div>
+        <p class="card__desc">${text.desc}</p>
+        <span class="card__id">#${item.id.toUpperCase()}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderGrid(container, items, opts = {}){
+  if(items.length === 0){ container.innerHTML = ""; return; }
+  container.innerHTML = items.map((item, i) => {
+    const html = cardTemplate(item, opts);
+    return html.replace('class="card', `style="animation-delay:${Math.min(i * 35, 400)}ms" class="card`);
+  }).join("");
+}
+
+/* ------------------------------------------------------------------------
+   7. RECOMMENDATION ALGORITHM
+   ------------------------------------------------------------------------ */
+function getRecommendations(age, genreKey, limit = 8){
+  const scored = RAW_ITEMS.map(item => {
+    let score = 0;
+    if(age === "all"){ score += 1; }
+    else if(item.age === age){ score += 10; }
+    else{
+      const dist = Math.abs(AGE_ORDER.indexOf(item.age) - AGE_ORDER.indexOf(age));
+      score += Math.max(0, 4 - dist * 2);
+    }
+    if(genreKey !== "all" && item.genreKey === genreKey){ score += 5; }
+    return { item, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+
+  const top = scored.slice(0, limit * 2);
+  const movies = top.filter(s => s.item.type === "movie").slice(0, Math.ceil(limit / 2));
+  const books = top.filter(s => s.item.type === "book").slice(0, Math.floor(limit / 2));
+  let mixed = [...movies, ...books];
+
+  if(mixed.length < limit){
+    const usedIds = new Set(mixed.map(s => s.item.id));
+    for(const s of scored){
+      if(mixed.length >= limit) break;
+      if(!usedIds.has(s.item.id)){ mixed.push(s); usedIds.add(s.item.id); }
+    }
+  }
+  return mixed.slice(0, limit).map(s => s.item);
+}
+
+function renderRecommendations(){
+  const grid = document.getElementById("recommendGrid");
+  const recs = getRecommendations(state.age, state.genre, 8);
+  renderGrid(grid, recs, { rec: true });
+
+  const ageLabel = state.age === "all" ? t().recommendAgeAll : t().ageTag(state.age);
+  document.getElementById("recommendAgeLabel").textContent = ageLabel;
+
+  const genreName = state.genre !== "all" ? GENRE_NAMES[state.lang][state.genre] : "";
+  document.getElementById("recommendNote").textContent = state.age === "all"
+    ? t().recommendNoteDefault
+    : t().recommendNoteActive(recs.length, state.age, genreName);
+}
+
+/* ------------------------------------------------------------------------
+   8. FILTERING / SEARCH
+   ------------------------------------------------------------------------ */
+function getFilteredItems(){
+  const query = state.search.trim().toLowerCase();
+  return RAW_ITEMS.filter(item => {
+    if(state.age !== "all" && item.age !== state.age) return false;
+    if(state.genre !== "all" && item.genreKey !== state.genre) return false;
+    if(state.type !== "all" && item.type !== state.type) return false;
+    if(query){
+      const text = item[state.lang];
+      const genreName = GENRE_NAMES[state.lang][item.genreKey].toLowerCase();
+      const hay = (text.title + " " + text.desc + " " + genreName).toLowerCase();
+      if(!hay.includes(query)) return false;
+    }
+    return true;
+  });
+}
+
+function renderBrowse(){
+  const grid = document.getElementById("browseGrid");
+  const empty = document.getElementById("emptyState");
+  const count = document.getElementById("resultsCount");
+
+  const items = getFilteredItems();
+  renderGrid(grid, items);
+
+  empty.hidden = items.length !== 0;
+  grid.style.display = items.length === 0 ? "none" : "grid";
+  count.textContent = t().resultsCount(items.length);
+}
+
+function renderFavorites(){
+  const grid = document.getElementById("favoritesGrid");
+  const empty = document.getElementById("favEmptyState");
+  const favItems = RAW_ITEMS.filter(item => isFavorite(item.id));
+  renderGrid(grid, favItems);
+  empty.hidden = favItems.length !== 0;
+  grid.style.display = favItems.length === 0 ? "none" : "grid";
+}
+
+function renderAll(){
+  renderRecommendations();
+  renderBrowse();
+  renderFavorites();
+  updateFavCount();
+}
+
+/* ------------------------------------------------------------------------
+   9. LANGUAGE APPLICATION — updates every static text node
+   ------------------------------------------------------------------------ */
+function populateGenreSelect(){
+  const select = document.getElementById("genreSelect");
+  const prevValue = select.value || "all";
+  const keys = Object.keys(GENRE_NAMES[state.lang]).sort((a, b) =>
+    GENRE_NAMES[state.lang][a].localeCompare(GENRE_NAMES[state.lang][b], state.lang)
+  );
+  select.innerHTML = `<option value="all">${t().genreAll}</option>` +
+    keys.map(k => `<option value="${k}">${GENRE_NAMES[state.lang][k]}</option>`).join("");
+  select.value = prevValue;
+}
+
+function applyLanguage(){
+  const s = t();
+  document.getElementById("htmlRoot").setAttribute("lang", state.lang);
+  document.getElementById("docTitle").textContent = s.docTitle;
+  document.getElementById("brandText").textContent = s.brand;
+  document.getElementById("navRecommendLink").textContent = s.navRecommend;
+  document.getElementById("navBrowseLink").textContent = s.navBrowse;
+  document.getElementById("navFavLabel").textContent = s.navFav;
+
+  document.getElementById("heroEyebrow").textContent = s.heroEyebrow;
+  document.getElementById("heroTitle").innerHTML = s.heroTitle;
+  document.getElementById("heroSubtitle").textContent = s.heroSubtitle;
+
+  const searchInput = document.getElementById("searchInput");
+  searchInput.placeholder = s.searchPlaceholder;
+  searchInput.setAttribute("aria-label", s.searchAria);
+  document.getElementById("searchClear").setAttribute("aria-label", s.searchClearAria);
+
+  document.getElementById("statMoviesLabel").textContent = s.statMovies;
+  document.getElementById("statBooksLabel").textContent = s.statBooks;
+  document.getElementById("statAgesLabel").textContent = s.statAges;
+
+  document.getElementById("ageGroupLabel").textContent = s.ageLabel;
+  document.getElementById("ageAllChip").textContent = s.ageAll;
+  document.getElementById("genreLabel").textContent = s.genreLabel;
+  document.getElementById("typeGroupLabel").textContent = s.typeLabel;
+  document.getElementById("typeAllChip").textContent = s.typeAll;
+  document.getElementById("typeMoviesChipLabel").textContent = s.typeMovies;
+  document.getElementById("typeBooksChipLabel").textContent = s.typeBooks;
+  document.getElementById("resetBtnLabel").textContent = s.resetBtn;
+
+  document.getElementById("recommendEyebrow").textContent = s.recommendEyebrow;
+  document.getElementById("recommendTitlePrefix").textContent = s.recommendPrefix;
+
+  document.getElementById("browseEyebrow").textContent = s.browseEyebrow;
+  document.getElementById("browseTitle").textContent = s.browseTitle;
+  document.getElementById("emptyStateText").textContent = s.emptyBrowse;
+
+  document.getElementById("favEyebrow").textContent = s.favEyebrow;
+  document.getElementById("favTitle").textContent = s.favTitle;
+  document.getElementById("favNote").textContent = s.favNote;
+  document.getElementById("favEmptyStateText").textContent = s.emptyFav;
+
+  document.getElementById("footerBrandText").textContent = s.footerBrand;
+  document.getElementById("footerTagline").textContent = s.footerTagline;
+  document.getElementById("footerMeta").textContent = s.footerMeta;
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("is-active", btn.dataset.lang === state.lang);
+  });
+
+  populateGenreSelect();
+  renderAll();
+}
+
+/* ------------------------------------------------------------------------
+   10. EVENT WIRING
+   ------------------------------------------------------------------------ */
+function wireFavoriteButtons(){
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-fav-id]");
+    if(!btn) return;
+    const id = btn.dataset.favId;
+    const item = RAW_ITEMS.find(i => i.id === id);
+    const wasFav = isFavorite(id);
+    toggleFavorite(id);
+    const title = item[state.lang].title;
+    showToast(wasFav ? t().toastRemoved(title) : t().toastSaved(title), wasFav ? "fa-regular fa-heart" : "fa-solid fa-heart");
+    renderBrowse();
+    renderRecommendations();
+    renderFavorites();
+  });
+}
+
+function wireAgeChips(){
+  document.querySelectorAll(".chip--age").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip--age").forEach(c => c.classList.remove("is-active"));
+      chip.classList.add("is-active");
+      state.age = chip.dataset.age;
+      renderRecommendations();
+      renderBrowse();
+    });
+  });
+}
+
+function wireTypeChips(){
+  document.querySelectorAll(".chip--type").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip--type").forEach(c => c.classList.remove("is-active"));
+      chip.classList.add("is-active");
+      state.type = chip.dataset.type;
+      renderBrowse();
+    });
+  });
+}
+
+function wireGenreSelect(){
+  document.getElementById("genreSelect").addEventListener("change", (e) => {
+    state.genre = e.target.value;
+    renderRecommendations();
+    renderBrowse();
+  });
+}
+
+function wireSearch(){
+  const input = document.getElementById("searchInput");
+  const clearBtn = document.getElementById("searchClear");
+  const form = document.getElementById("searchForm");
+
+  input.addEventListener("input", () => {
+    state.search = input.value;
+    clearBtn.classList.toggle("is-visible", input.value.length > 0);
+    renderBrowse();
+  });
+  clearBtn.addEventListener("click", () => {
+    input.value = ""; state.search = "";
+    clearBtn.classList.remove("is-visible");
+    renderBrowse();
+    input.focus();
+  });
+  form.addEventListener("submit", (e) => e.preventDefault());
+}
+
+function wireReset(){
+  document.getElementById("resetFilters").addEventListener("click", () => {
+    state.search = ""; state.age = "all"; state.genre = "all"; state.type = "all";
+    document.getElementById("searchInput").value = "";
+    document.getElementById("searchClear").classList.remove("is-visible");
+    document.getElementById("genreSelect").value = "all";
+    document.querySelectorAll(".chip--age").forEach(c => c.classList.toggle("is-active", c.dataset.age === "all"));
+    document.querySelectorAll(".chip--type").forEach(c => c.classList.toggle("is-active", c.dataset.type === "all"));
+    renderRecommendations();
+    renderBrowse();
+    showToast(t().toastReset, "fa-solid fa-rotate-left");
+  });
+}
+
+function wireTheme(){ document.getElementById("themeToggle").addEventListener("click", toggleTheme); }
+
+function wireNav(){
+  const hamburger = document.getElementById("hamburger");
+  const navlinks = document.getElementById("navlinks");
+  hamburger.addEventListener("click", () => navlinks.classList.toggle("is-open"));
+  navlinks.querySelectorAll("a").forEach(link => link.addEventListener("click", () => navlinks.classList.remove("is-open")));
+}
+
+function wireLangSwitcher(){
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if(btn.dataset.lang === state.lang) return;
+      state.lang = btn.dataset.lang;
+      saveLang(state.lang);
+      applyLanguage();
+    });
+  });
+}
+
+/* ------------------------------------------------------------------------
+   11. INIT
+   ------------------------------------------------------------------------ */
+document.addEventListener("DOMContentLoaded", () => {
+  initTheme();
+  wireFavoriteButtons();
+  wireAgeChips();
+  wireTypeChips();
+  wireGenreSelect();
+  wireSearch();
+  wireReset();
+  wireTheme();
+  wireNav();
+  wireLangSwitcher();
+  applyLanguage();
+});
+
+</script>
+</body>
+</html>
